@@ -6,7 +6,7 @@ var string = require('blear.utils.string');
 var browserJSPrefixList = ['', 'webkit', 'moz', 'ms', 'MS'];
 var browserCSSPrefixList = ['', '-webkit', '-moz', '-ms'];
 // @link http://www.w3school.com.cn/cssref/index.asp
-var reCSS3 = /(border|animation|backgroud-size|transition|transform|display|filter|overflow)/;
+var reCSS3 = /(position|border|animation|backgroud-size|transition|transform|display|filter|overflow)/;
 var reCSSPrefix = /^-(webkit|moz|ms)-/i;
 // translateX(0) => translateX(0px)
 var reCSSCheckVal = /\(.*$$/;
@@ -160,7 +160,7 @@ exports.css = function (standardKey, standardVal) {
         }
     });
 
-    var com = null;
+    var com;
 
     /* istanbul ignore next */
     if (!findKey && (com = compatibleCSSMap[standardKey])) {
