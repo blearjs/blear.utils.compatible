@@ -3,25 +3,17 @@
 var array = require('blear.utils.array');
 var string = require('blear.utils.string');
 
+var doc = document;
 var browserJSPrefixList = ['', 'webkit', 'moz', 'ms', 'MS'];
 var browserCSSPrefixList = ['', '-webkit', '-moz', '-ms'];
-// @link http://www.w3school.com.cn/cssref/index.asp
-var reCSS3 = /(position|border|animation|backgroud-size|transition|transform|display|filter|overflow)/;
 var reCSSPrefix = /^-(webkit|moz|ms)-/i;
 // translateX(0) => translateX(0px)
 var reCSSCheckVal = /\(.*$$/;
-var pEl = document.createElement('p');
 var regOn = /^on/;
-var compatibleCSSMap = {
-    opacity: function (key, val) {
-        // @fuckie
-        /* istanbul ignore next */
-        return {
-            key: 'filter',
-            val: 'alpha(opacity=' + (val * 100) + ')'
-        };
-    }
+var newTestEl = function () {
+    return doc.createElement('p');
 };
+var testEl = newTestEl();
 
 
 /**
@@ -111,13 +103,6 @@ exports.event = function (standard, parent) {
 exports.css = function (standardKey, standardVal) {
     standardKey = string.separatorize(standardKey.trim().replace(reCSSPrefix, ''));
 
-    if (!reCSS3.test(standardKey)) {
-        return {
-            key: standardKey,
-            val: standardVal
-        };
-    }
-
     var findKey = '';
     var findVal = '';
     var checkVal = (standardVal + '').replace(reCSSCheckVal, '').toLowerCase();
@@ -126,21 +111,24 @@ exports.css = function (standardKey, standardVal) {
         var testKey = prefix ? prefix + '-' + standardKey : standardKey;
         var setKey = string.humprize(testKey);
 
-        if (setKey in pEl.style) {
+        if (setKey in testEl.style) {
             findKey = testKey;
 
             if (standardVal) {
                 array.each(browserCSSPrefixList, function (index, prefix) {
                     var setVal = prefix ? prefix + '-' + standardVal : standardVal;
+                    // 防止一个元素多次测试互相影响
+                    //
+                    var testEl = newTestEl();
 
                     try {
                         // ie 下某些复制会报错
-                        pEl.style[setKey] = setVal;
+                        testEl.style[setKey] = setVal;
                     } catch (err) {
                         // ignore
                     }
 
-                    var cssText = pEl.style.cssText.toLowerCase();
+                    var cssText = testEl.style.cssText.toLowerCase();
 
                     if (cssText.indexOf(checkVal) > -1) {
                         findVal = setVal;
@@ -159,17 +147,6 @@ exports.css = function (standardKey, standardVal) {
             }
         }
     });
-
-    var com;
-
-    /* istanbul ignore next */
-    if (!findKey && (com = compatibleCSSMap[standardKey])) {
-        if (standardVal) {
-            return com(standardKey, standardVal);
-        } else {
-            findKey = standardKey;
-        }
-    }
 
     return {key: findKey, val: findVal};
 };
