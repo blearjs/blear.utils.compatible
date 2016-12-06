@@ -14,6 +14,8 @@ var newTestEl = function () {
     return doc.createElement('p');
 };
 var testEl = newTestEl();
+// @link http://www.w3cplus.com/css/the-lengths-of-css.html
+var reUnit = /(px|em|rem|in|cm|mm|pt|pc|ex|ch|vw|vh|vmin|vmax|%)/i;
 
 
 /**
@@ -118,7 +120,6 @@ exports.css = function (standardKey, standardVal) {
                 array.each(browserCSSPrefixList, function (index, prefix) {
                     var setVal = prefix ? prefix + '-' + standardVal : standardVal;
                     // 防止一个元素多次测试互相影响
-                    //
                     var testEl = newTestEl();
 
                     try {
@@ -130,7 +131,9 @@ exports.css = function (standardKey, standardVal) {
 
                     var cssText = testEl.style.cssText.toLowerCase();
 
-                    if (cssText.indexOf(checkVal) > -1) {
+                    // 如果值里有单位说明是正确的 || 值里包含检查数据也是正确的
+                    // 12.34567px => 12.346px
+                    if (reUnit.test(checkVal) || cssText.indexOf(checkVal) > -1) {
                         findVal = setVal;
                         return false;
                     }

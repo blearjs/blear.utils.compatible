@@ -54,6 +54,7 @@ describe('index.js', function () {
         var ret2 = compatible.css('display', 'flex');
         var ret3 = compatible.css('border-radius', '2px');
         var ret4 = compatible.css('filter', 'blur(2px)');
+        var ret5 = compatible.css('width', '11.11111px');
 
         expect(ret1.key).toBe('width');
         setStyle(divEl, ret1.key, '100px');
@@ -76,5 +77,7 @@ describe('index.js', function () {
             setStyle(divEl, ret4.key, ret4.val);
             expect(getStyle(divEl, ret4.key)).toEqual(ret4.val);
         }
+
+        expect(ret5.key).toBe('width');
     });
 });

@@ -1,6 +1,6 @@
 {
   "name": "blear.utils.compatible",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "浏览器兼容性",
   "scripts": {
     "live": "browser-sync start --config bs-config.js",
