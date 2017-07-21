@@ -15,7 +15,7 @@ var newTestEl = function () {
 };
 var testEl = newTestEl();
 // @link http://www.w3cplus.com/css/the-lengths-of-css.html
-var reUnit = /(px|em|rem|in|cm|mm|pt|pc|ex|ch|vw|vh|vmin|vmax|%)/i;
+var reUnit = /(px|em|rem|in|cm|mm|pt|pc|ex|ch|vw|vh|vmin|vmax|%|rgb)/i;
 
 
 /**
@@ -133,7 +133,7 @@ exports.css = function (standardKey, standardVal) {
 
                     // 如果值里有单位说明是正确的 || 值里包含检查数据也是正确的
                     // 12.34567px => 12.346px
-                    if (reUnit.test(checkVal) || cssText.indexOf(checkVal) > -1) {
+                    if (reUnit.test(cssText) || cssText.indexOf(checkVal) > -1) {
                         findVal = setVal;
                         return false;
                     }
