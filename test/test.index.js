@@ -45,6 +45,7 @@ describe('index.js', function () {
         var key1 = compatible.event('onabort', window);
         var key2 = compatible.event('animationiteration', window);
 
+        console.log(key2);
         key1 && expect('on' + key1 in window).toBe(true);
         key2 && expect('on' + key2 in window).toBe(true);
     });

@@ -10,6 +10,7 @@ var reCSSPrefix = /^-(webkit|moz|ms)-/i;
 // translateX(0) => translateX(0px)
 var reCSSCheckVal = /\(.*$$/;
 var regOn = /^on/;
+var transitionAnimationRE = /^(transition|animation)/i;
 var newTestEl = function () {
     return doc.createElement('p');
 };
@@ -47,7 +48,7 @@ var getCompatibleAPI = function (standard, parent, isEventType) {
 
     array.each(browserJSPrefixList, function (index, prefix) {
         html5Key = isEventType ?
-            (prefix + standard ) :
+            (prefix + standard) :
             (prefix ? prefix + upperCaseFirstLetter(standard) : standard);
 
         if ((isEventType ? evOn : '') + html5Key in parent) {
@@ -81,13 +82,34 @@ exports.js = function (standard, parent) {
  * 获取有浏览器前缀的事件名称
  * @param {String} standard 标准事件名称
  * @param {Object} [parent=document]  标准事件父级
- * @returns {String} 兼容的事件名称
+ * @returns {String|undefined} 兼容的事件名称
  *
  * @example
  * compatible.event('transitionend', window);
  * // => "onwebkittransitionend"
  */
 exports.event = function (standard, parent) {
+    // ie 的 transition 无法在 JS 对象里直接检测，因此采用另外方式
+    // @ref https://github.com/EvandroLG/transitionEnd/blob/master/src/transition-end.js
+    if (transitionAnimationRE.test(standard)) {
+        var starting = '';
+        var ending = standard.replace(transitionAnimationRE, function ($0) {
+            starting = $0;
+            return '';
+        });
+        var cssKey = compatibleCSS(starting).key;
+
+        if (/^webkit/i.test(cssKey)) {
+            return string.humprize('webkit-' + starting + '-' + ending);
+        }
+
+        if (/^o/i.test(cssKey)) {
+            return string.humprize('o-' + starting + '-' + ending);
+        }
+
+        return starting + ending;
+    }
+
     return getCompatibleAPI(standard, parent || document, true);
 };
 
@@ -102,7 +124,7 @@ exports.event = function (standard, parent) {
  * compatible.css('border-start');
  * // => {key: "-webkit-border-start"}
  */
-exports.css = function (standardKey, standardVal) {
+var compatibleCSS = exports.css = function (standardKey, standardVal) {
     standardKey = string.separatorize(standardKey.trim().replace(reCSSPrefix, ''));
 
     var findKey = '';
