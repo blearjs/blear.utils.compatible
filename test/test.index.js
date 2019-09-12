@@ -44,10 +44,14 @@ describe('index.js', function () {
     it('.event', function () {
         var key1 = compatible.event('onabort', window);
         var key2 = compatible.event('animationiteration', window);
+        var key3 = compatible.event('fullscreenchange', document);
 
+        console.log(key1);
         console.log(key2);
+        console.log(key3);
         key1 && expect('on' + key1 in window).toBe(true);
         key2 && expect('on' + key2 in window).toBe(true);
+        key3 && expect('on' + key3 in document).toBe(true);
     });
 
     it('.css', function () {

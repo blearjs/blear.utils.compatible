@@ -4,11 +4,14 @@ var array = require('blear.utils.array');
 var string = require('blear.utils.string');
 
 var doc = document;
-var browserJSPrefixList = ['', 'webkit', 'moz', 'ms', 'MS'];
-var browserCSSPrefixList = ['', '-webkit', '-moz', '-ms'];
+// 修改：优先取带私有属性的，肯定不会错
+// 因为有些浏览器有标准值也有私有值，但标准值却失效
+// 如 chrome document.onfullscreenchange 事件，其实是无效的
+var browserJSPrefixList = ['webkit', 'moz', 'ms', 'MS', ''];
+var browserCSSPrefixList = ['-webkit', '-moz', '-ms', ''];
 var reCSSPrefix = /^-(webkit|moz|ms)-/i;
 // translateX(0) => translateX(0px)
-var reCSSCheckVal = /\(.*$$/;
+var reCSSCheckVal = /\(.*$/;
 var regOn = /^on/;
 var transitionAnimationRE = /^(transition|animation)/i;
 var newTestEl = function () {
